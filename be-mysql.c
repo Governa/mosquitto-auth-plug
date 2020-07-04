@@ -186,7 +186,7 @@ static bool auto_connect(struct mysql_backend *conf)
 	return false;
 }
 
-int be_mysql_getuser(void *handle, const char *username, const char *password, char **phash, const char *clientid)
+int be_mysql_getuser(void *handle, const char *username, const char *password, char **phash, const char *clientid, const char *address)
 {
 	struct mysql_backend *conf = (struct mysql_backend *)handle;
 	char *query = NULL, *u = NULL, *value = NULL, *v;
@@ -211,7 +211,7 @@ int be_mysql_getuser(void *handle, const char *username, const char *password, c
 		free(u);
 		return BACKEND_ERROR;
 	}
-	sprintf(query, conf->userquery, u, clientid);
+	sprintf(query, conf->userquery, u, clientid, address);
 	free(u);
 
 	if (mysql_query(conf->mysql, query)) {
@@ -240,7 +240,9 @@ out:
 	free(query);
 
 	*phash = value;
-	return BACKEND_DEFER;
+	return (value && !strcmp(value, "ALLOW")) ? BACKEND_ALLOW :
+		(value && !strcmp(value, "DENY")) ? BACKEND_DENY :
+		BACKEND_DEFER;
 }
 
 /*

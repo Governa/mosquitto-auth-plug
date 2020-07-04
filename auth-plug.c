@@ -553,9 +553,9 @@ int mosquitto_auth_unpwd_check(void *userdata, const char *username, const char 
 			phash = NULL;
 		}
 #if MOSQ_AUTH_PLUGIN_VERSION >=3	
-		rc = b->getuser(b->conf, username, password, &phash, mosquitto_client_id(client));
+		rc = b->getuser(b->conf, username, password, &phash, mosquitto_client_id(client), mosquitto_client_address(client));
 #else
-		rc = b->getuser(b->conf, username, password, &phash, NULL);
+		rc = b->getuser(b->conf, username, password, &phash, NULL, NULL);
 #endif
 		if (rc == BACKEND_ALLOW) {
 			backend_name = (*bep)->name;
@@ -773,7 +773,7 @@ int mosquitto_auth_psk_key_get(void *userdata, const char *hint, const char *ide
 	for (bep = ud->be_list; bep && *bep; bep++) {
 		struct backend_p *b = *bep;
 		if (!strcmp(database, b->name)) {
-			rc = b->getuser(b->conf, username, NULL, &psk_key, NULL);
+			rc = b->getuser(b->conf, username, NULL, &psk_key, NULL, NULL);
 			break;
 		}
 
