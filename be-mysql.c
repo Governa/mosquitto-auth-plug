@@ -368,8 +368,8 @@ int be_mysql_aclcheck(void *handle, const char *clientid, const char *username, 
 			if (expanded && *expanded) {
 				mosquitto_auth_sub_topic_matches_acl(expanded, topic, &bf);
 				if (bf) match = BACKEND_ALLOW;
-				_log(LOG_DEBUG, "  mysql: topic_matches(%s, %s) == %d",
-				     expanded, v, bf);
+				_log(LOG_DEBUG, "  mysql: topic_matches_acl(%s, %s) == %d",
+				     expanded, topic, bf);
 
 				free(expanded);
 			}
