@@ -652,11 +652,15 @@ int mosquitto_auth_acl_check(void *userdata, const char *clientid, const char *u
 		return MOSQ_DENY_ACL;
 	}
 
+	if (access == MOSQ_ACL_SUBSCRIBE) {
+		access = MOSQ_ACL_READ;
+	}
+
 	_log(LOG_DEBUG, "mosquitto_auth_acl_check(..., %s, %s, %s, %d)",
 		clientid ? clientid : "NULL",
 		username ? username : "NULL",
 		topic ? topic : "NULL",
-		access );
+		access);
 
 
 	granted = acl_cache_q(clientid, username, topic, access, userdata);
@@ -769,7 +773,7 @@ int mosquitto_auth_psk_key_get(void *userdata, const char *hint, const char *ide
 	for (bep = ud->be_list; bep && *bep; bep++) {
 		struct backend_p *b = *bep;
 		if (!strcmp(database, b->name)) {
-			rc = b->getuser(b->conf, username, NULL, &psk_key);
+			rc = b->getuser(b->conf, username, NULL, &psk_key, NULL);
 			break;
 		}
 
